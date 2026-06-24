@@ -1,19 +1,19 @@
-from fastapi import Request
 import time
 
+async def request_logger(request, call_next):
 
-async def request_logger(request: Request, call_next):
-    start_time = time.time()
+    start = time.time()
 
     response = await call_next(request)
 
-    process_time = time.time() - start_time
+    end = time.time()
 
-    print(
-        f"{request.method} | "
-        f"{request.url.path} | "
-        f"Status: {response.status_code} | "
-        f"Time: {process_time:.4f}s"
-    )
+    with open("logs.txt", "a") as file:
+        file.write(
+            f"{request.method} "
+            f"{request.url.path} "
+            f"{response.status_code} "
+            f"{round(end-start,4)} sec\n"
+        )
 
     return response

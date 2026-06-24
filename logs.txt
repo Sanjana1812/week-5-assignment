@@ -1,0 +1,6 @@
+GET /docs 200 0.0 sec
+GET /openapi.json 200 0.0229 sec
+GET /students/db-check 200 0.002 sec
+GET /students/db-check 200 0.001 sec
+POST /students/notify 200 0.001 sec
+POST /students/notify 200 0.001 sec

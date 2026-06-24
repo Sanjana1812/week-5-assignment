@@ -23,3 +23,6 @@ def get_db():
         yield db
     finally:
         db.close()
+
+def get_db():
+    return "Database Connected"

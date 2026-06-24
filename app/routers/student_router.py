@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-
+from fastapi import Depends
 from app.database.connection import get_db
+from fastapi import BackgroundTasks
+
 
 from app.schemas.student_schema import (
     StudentCreate,
@@ -30,6 +32,21 @@ async def create_student_api(
 from typing import List
 from app.services.student_service import fetch_students
 
+def send_notification(name):
+    print(f"Notification sent to {name}")
+@router.post("/notify")
+async def notify_student(
+    name: str,
+    background_tasks: BackgroundTasks
+):
+    background_tasks.add_task(
+        send_notification,
+        name
+    )
+
+    return {
+        "message": "Notification queued"
+    }
 
 @router.get(
     "/",
@@ -44,6 +61,11 @@ from fastapi import HTTPException
 from app.services.student_service import (
     fetch_student
 )
+@router.get("/db-check")
+async def db_check(db=Depends(get_db)):
+    return {
+        "message": db
+    }
 @router.get(
     "/{student_id}",
     response_model=StudentResponse
