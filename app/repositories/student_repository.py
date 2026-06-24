@@ -72,3 +72,33 @@ def delete_student(
         db.commit()
 
     return student
+def search_students(
+    db,
+    search="",
+    page=1,
+    limit=5
+):
+
+    query = db.query(Student)
+
+    if search:
+
+        query = (
+            query.filter(
+                Student.name
+                .ilike(
+                    f"%{search}%"
+                )
+            )
+        )
+
+    start = (
+        page - 1
+    ) * limit
+
+    return (
+        query
+        .offset(start)
+        .limit(limit)
+        .all()
+    )

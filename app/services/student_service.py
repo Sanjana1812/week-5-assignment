@@ -50,3 +50,21 @@ def remove_student(
         db,
         student_id
     )
+from app.repositories.student_repository import (
+    search_students
+)
+
+
+def search_student_service(
+    db,
+    search,
+    page,
+    limit
+):
+
+    return search_students(
+        db,
+        search,
+        page,
+        limit
+    )

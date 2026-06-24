@@ -120,3 +120,32 @@ async def delete_student_api(
         "message":
         "Student deleted successfully"
     }
+from app.services.student_service import (
+    search_student_service
+)
+@router.get(
+    "/search/",
+    response_model=list[StudentResponse]
+)
+async def search_students_api(
+
+    search: str = "",
+
+    page: int = 1,
+
+    limit: int = 5,
+
+    db: Session = Depends(
+        get_db
+    )
+
+):
+
+    return (
+        search_student_service(
+            db,
+            search,
+            page,
+            limit
+        )
+    )
