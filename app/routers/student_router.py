@@ -1,0 +1,122 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.database.connection import get_db
+
+from app.schemas.student_schema import (
+    StudentCreate,
+    StudentResponse
+)
+
+from app.services.student_service import add_student
+
+
+router = APIRouter(
+    prefix="/students",
+    tags=["Students"]
+)
+
+
+@router.post(
+    "/",
+    response_model=StudentResponse
+)
+async def create_student_api(
+    student: StudentCreate,
+    db: Session = Depends(get_db)
+):
+
+    return add_student(db, student)
+from typing import List
+from app.services.student_service import fetch_students
+
+
+@router.get(
+    "/",
+    response_model=List[StudentResponse]
+)
+async def get_students_api(
+    db: Session = Depends(get_db)
+):
+
+    return fetch_students(db)
+from fastapi import HTTPException
+from app.services.student_service import (
+    fetch_student
+)
+@router.get(
+    "/{student_id}",
+    response_model=StudentResponse
+)
+async def get_student_api(
+    student_id: int,
+    db: Session = Depends(get_db)
+):
+
+    student = fetch_student(
+        db,
+        student_id
+    )
+
+    if not student:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Student not found"
+        )
+
+    return student
+from app.services.student_service import (
+    edit_student
+)
+@router.put(
+    "/{student_id}",
+    response_model=StudentResponse
+)
+async def update_student_api(
+    student_id: int,
+    student: StudentCreate,
+    db: Session = Depends(get_db)
+):
+
+    updated = edit_student(
+        db,
+        student_id,
+        student
+    )
+
+    if not updated:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Student not found"
+        )
+
+    return updated
+from app.services.student_service import (
+    remove_student
+)
+@router.delete(
+    "/{student_id}"
+)
+async def delete_student_api(
+    student_id: int,
+    db: Session = Depends(get_db)
+):
+
+    deleted = remove_student(
+        db,
+        student_id
+    )
+
+    if not deleted:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Student not found"
+        )
+
+    return {
+        "message":
+        "Student deleted successfully"
+    }
